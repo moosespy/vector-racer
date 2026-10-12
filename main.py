@@ -1,20 +1,39 @@
 import os
+import time
 
-width, height = 20, 15
-inner_x1, inner_x2 = 6, 14
-inner_y1, inner_y2 = 1, 10
-finish_x = 15
-finish_y_start = 1
-finish_y_end = 3
+track_template = [
+    "WWWWWWWWWWWWWWWWWWWW", 
+    "W..S..WWWW.......WWW", 
+    "WW.....WW.........wW", 
+    "WWW.....WW...WW....W", 
+    "WWWW.....Ww...WW...W", 
+    "WWwW....WWWW...W...W", 
+    "WWW.....WWWW...W...W", 
+    "WW......WWWW...W...W", 
+    "W......WWWW....W...W", 
+    "W....WWWWW....WW...W", 
+    "WW....WWW....WW...WW", 
+    "WWW.........WW.....W", 
+    "WWWW.......WWWWW...W", 
+    "WFFWWWWWWWWWWW.....W", 
+    "W..................W", 
+    "WW.................W", 
+    "WWWWWWWWWWWWWWWWWWWW"
+]
+px, py = 0, 0
+height = len(track_template)
+width = len(track_template[0])
+for y in range(height):
+    for x in range(width):
+        if track_template[y][x] == "S":
+            px, py = x, y
 
-px, py = 2, 2
 vx, vy = 0, 0
 ax, ay = 0, 0
 turns = 0
 
 def draw_frame():
     os.system('clear')
-    print(f"{px}, {py}")
     print(f"--- Vector Racing --- Turns: {turns}")
     print(f"Current Velocity Vector: ({vx}, {vy})")
     print(f"Next Move Preview: Coasting to ({px+vx+ax}, {py+vy+ay})")
@@ -25,14 +44,14 @@ def draw_frame():
                 row += "p "
             elif x == px + vx + ax and y == py + vy + ay:
                 row += "o "
-            elif x == 0 or x == width - 1 or y == 0 or y == height - 1:
-                row += "x "
-            elif inner_x1 <= x <= inner_x2 and inner_y1 <= y <= inner_y2:
-                row += "x "
-            elif x == finish_x and finish_y_start <= y <= finish_y_end:
-                row += "f "
             else:
-                row += ". "
+                tile = track_template[y][x]
+                if tile == "W":
+                    row += "W "
+                elif tile == "F":
+                    row += "F "
+                else:
+                    row += ". "
         print(row)
     print(f"\nAdjusted Input Accel Vector: ({ax}, {ay})")
 
@@ -57,11 +76,9 @@ def get_line_points(x1, y1, x2, y2):
     return points
 
 def wall_collide(x, y):
-    if x <= 0 or x >= width - 1 or y <= 0 or y >= height - 1:
+    if x < 0 or x >= width or y < 0 or y >= height:
         return True
-    if inner_x1 <= x <= inner_x2 and inner_y1 <= y <= inner_y2:
-        return True
-    return False
+    return track_template[y][x] == "W"
 
 while True:
     draw_frame()
@@ -87,10 +104,14 @@ while True:
 
         travel_path = get_line_points(old_px, old_py, new_px, new_py)
         hit_wall = False
+        crossed_finish = False
         for step in travel_path:
-            if wall_collide(step["x"], step["y"]):
+            sx, sy = step["x"], step["y"]
+            if wall_collide(sx, sy):
                 hit_wall = True
                 break
+            if track_template[sy][sx] == "F":
+                crossed_finish = True
         if hit_wall:
             print("\nYou have crashed! Game over.")
             break
@@ -100,6 +121,6 @@ while True:
         ax = 0
         ay = 0
 
-        if old_px > finish_x and px <= finish_x and finish_y_start <= py <= finish_y_end:
+        if crossed_finish:
             print(f"\n You finished! You completed in {turns} turns!")
             break
