@@ -73,7 +73,16 @@ def draw_frame():
         row = ""
         for x in range(width):
             if x == px and y == py:
-                string = "\033[38;2;255;165;0m" + "▼ " + "\033[0m"
+                if abs(vy) >= abs(vx):
+                    if vy >= 0:
+                        string = "\033[38;2;255;165;0m" + "▼ " + "\033[0m"
+                    else:
+                        string = "\033[38;2;255;165;0m" + "▲ " + "\033[0m"
+                elif abs(vx) > abs(vy):
+                    if vx > 0:
+                        string = "\033[38;2;255;165;0m" + "► " + "\033[0m"
+                    else:
+                        string = "\033[38;2;255;165;0m" + "◄ " + "\033[0m"
                 row += string
             elif x == px + vx + ax and y == py + vy + ay:
                 string = "\033[93m" + "● " + "\033[0m"
@@ -161,5 +170,5 @@ while True:
         ay = 0
 
         if crossed_finish:
-            print(f"\n You finished! You completed in {turns} turns!")
+            print(f"\nYou finished! You completed in {turns} turns!")
             break
