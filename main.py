@@ -34,18 +34,18 @@ track_2 = [
     "WWW.........WW.....W", 
     "WWWW.......WWWWW...W", 
     "WFFWWWWWWWWWWW.....W", 
-    "W..................W", 
-    "WW.................W", 
+    "W.................WW", 
+    "WW...............WWW", 
     "WWWWWWWWWWWWWWWWWWWW"
 ]
-track_template_list = [track_1]
+track_template_list = [track_1, track_2]
 
 print("What track would you like to race on (#)?")
 print("1) Oval")
 print("2) Snake")
 while 1:
     track = input()
-    if 1 <= int(track) <= 1:
+    if 1 <= int(track) <= 2:
         break
     else:
         print("Please pick a track number.")
@@ -73,15 +73,21 @@ def draw_frame():
         row = ""
         for x in range(width):
             if x == px and y == py:
-                row += "p "
+                string = "\033[38;2;255;165;0m" + "▼ " + "\033[0m"
+                row += string
             elif x == px + vx + ax and y == py + vy + ay:
-                row += "o "
+                string = "\033[93m" + "● " + "\033[0m"
+                row += string
             else:
                 tile = track_template[y][x]
                 if tile == "W" or tile == "w":
-                    row += "W "
+                    string = "\033[31m" + "█ " + "\033[0m"
+                    row += string
                 elif tile == "F" or tile == "f":
-                    row += "F "
+                    string = "\033[32m" + "🏁" + "\033[0m"
+                    row += string
+                elif abs(x - (px+vx)) <= 1 and abs(y - (py+vy)) <= 1:
+                    row += "* "
                 else:
                     row += ". "
         print(row)
