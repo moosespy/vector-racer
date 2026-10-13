@@ -1,13 +1,31 @@
 import os
 import time
-
-track_template = [
+track_1 = [
+    "WWWWWWWWWWWWWWWWWWWW", 
+    "WWWW............wwWW", 
+    "WWw..............wwW", 
+    "Ww......wwww......wW", 
+    "Ww.....wwWwww.....wW", 
+    "WW.....wWWWWw.....wW", 
+    "WWFFFFFwWWWWw.....wW", 
+    "WWWWWWWwWWWWw.....wW", 
+    "WwW.S.WWWWWWw.....wW", 
+    "Ww.....WWWwWw.....wW", 
+    "WW.....WWwwWw.....WW", 
+    "WW.....WWWwww.....wW", 
+    "WW.....WWwwww.....wW", 
+    "Ww......wwww......wW", 
+    "Www..............wwW", 
+    "WWww............wwwW", 
+    "WWWWWWWWWWWWWWWWWWWW"
+]
+track_2 = [
     "WWWWWWWWWWWWWWWWWWWW", 
     "W..S..WWWW.......WWW", 
-    "WW.....WW.........wW", 
+    "WW.....WW.........WW", 
     "WWW.....WW...WW....W", 
     "WWWW.....Ww...WW...W", 
-    "WWwW....WWWW...W...W", 
+    "WWWW....WWWW...W...W", 
     "WWW.....WWWW...W...W", 
     "WW......WWWW...W...W", 
     "W......WWWW....W...W", 
@@ -20,6 +38,20 @@ track_template = [
     "WW.................W", 
     "WWWWWWWWWWWWWWWWWWWW"
 ]
+track_template_list = [track_1]
+
+print("What track would you like to race on (#)?")
+print("1) Oval")
+print("2) Snake")
+while 1:
+    track = input()
+    if 1 <= int(track) <= 1:
+        break
+    else:
+        print("Please pick a track number.")
+if 1 <= int(track) <= len(track_template_list):
+    track_template = track_template_list[int(track)-1]
+
 px, py = 0, 0
 height = len(track_template)
 width = len(track_template[0])
@@ -46,9 +78,9 @@ def draw_frame():
                 row += "o "
             else:
                 tile = track_template[y][x]
-                if tile == "W":
+                if tile == "W" or tile == "w":
                     row += "W "
-                elif tile == "F":
+                elif tile == "F" or tile == "f":
                     row += "F "
                 else:
                     row += ". "
@@ -112,6 +144,7 @@ while True:
                 break
             if track_template[sy][sx] == "F":
                 crossed_finish = True
+                break
         if hit_wall:
             print("\nYou have crashed! Game over.")
             break
