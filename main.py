@@ -38,14 +38,38 @@ track_2 = [
     "WW...............WWW", 
     "WWWWWWWWWWWWWWWWWWWW"
 ]
-track_template_list = [track_1, track_2]
+track_3 = [
+    "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+    "WW.......................................wW"
+    "WW.......................................wW"
+    "WW.....Wwwwwwwwwwwwwwwwwwwwwwwwwwww......wW"
+    "WWw......wwwwww.............wwwwww.......wW"
+    "WWww.......www...............wwww........wW"
+    "WWwwwww......ww.....wwww.......w.........wW"
+    "WWwwwwww......www.....www................wW"
+    "WWwwwww........ww.......wwww.............wW"
+    "WWwwww.........ww..........www...........wW"
+    "WWwww..........www..........wwwwwwwwwwwwwwW"
+    "WWww...........wwwwww.........wwwwwwwwwwwwW"
+    "WWw............wwwwwwwwwww......wwwwwwwwwwW"
+    "WW............www........www......wwwwwwwwW"
+    "WW...........wwww..........www.........wwwW"
+    "WW..........wwwww............www.........wW"
+    "WW........wwww........ww.......www.......wW"
+    "WW....................ww.................wW"
+    "WW...................wwww................wW"
+    "WWwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwW"
+
+]
+track_template_list = [track_1, track_2, track_3]
 
 print("What track would you like to race on (#)?")
 print("1) Oval")
 print("2) Snake")
+print("3) Z-Track")
 while 1:
     track = input()
-    if 1 <= int(track) <= 2:
+    if 1 <= int(track) <= 3:
         break
     else:
         print("Please pick a track number.")
@@ -206,11 +230,14 @@ while True:
                 if track_template[sy][sx] == "F":
                     crossed_finish = True
                     break
+            px2, py2 = new_px2, new_py2
+            if px2 == px1 and py2 == py1:
+                print("\nYou have crashed into Player 1! Player 1 wins!")
+                break
             if hit_wall:
                 print("\nYou have crashed! Player 1 wins!")
                 break
 
-            px2, py2 = new_px2, new_py2
             player_turn = 1
             turns += 1
             travel_path = []
@@ -251,6 +278,9 @@ while True:
                 if track_template[sy][sx] == "F":
                     crossed_finish = True
                     break
+            px1, py1 = new_px1, new_py1
+            if px1 == px2 and py1 == py2 and player_count > 1:
+                print("\nYou have crashed into Player 2! Player 2 wins!")
             if hit_wall:
                 if player_count > 1:
                     print("\nYou have crashed! Player 2 wins!")
@@ -258,7 +288,6 @@ while True:
                     print("\nYou have crashed! Game over.")
                 break
 
-            px1, py1 = new_px1, new_py1
             ax1 = 0
             ay1 = 0
             travel_path = []
