@@ -32,22 +32,22 @@ t1_cp = [
     (4, 6)
 ]
 track_2 = [
-    "WWWWWWWWWWWWWWWWWWWW", 
-    "W.1..2WWWW.......WWW", 
-    "WW.....WW.........WW", 
-    "WWW.....WW...WW....W", 
-    "WWWW.....Ww...WW...W", 
-    "WWWW....WWWW...W...W", 
-    "WWW.....WWWW...W...W", 
-    "WW......WWWW...W...W", 
-    "W......WWWW....W...W", 
-    "W....WWWWW....WW...W", 
-    "WW....WWW....WW...WW", 
-    "WWW.........WW.....W", 
-    "WWWW.......WWWWW...W", 
-    "WFFWWWWWWWWWWW.....W", 
-    "W.................WW", 
-    "WW...............WWW", 
+    "WWWWWWWWWWWWWWwWWWWWW", 
+    "W.1..2WWWW........WWW", 
+    "WW.....WWw.........WW", 
+    "WWW.....WW....WW....W", 
+    "WWWW....wWw....WW...W", 
+    "WWWW....WWWW....W...W", 
+    "WWW.....WWWW....W...W", 
+    "WW......WWWW....W...W", 
+    "W......WWWW.....W...W", 
+    "W....WWWWW.....WW...W", 
+    "WW....WWW.....WW...WW", 
+    "WWW..........Ww.....W", 
+    "WWWW.......WWWWWw...W", 
+    "WFFWWWWWWWWWWW......W", 
+    "W..................WW", 
+    "WW................WWW", 
     "WWWWWWWWWWWWWWWWWWWW"
 ]
 t2_cp = [
@@ -80,7 +80,18 @@ track_3 = [
     "WWwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwW",
 ]
 t3_cp = [
-
+    (16, 1),
+    (35, 2), 
+    (31, 7),
+    (23, 5),
+    (17, 6),
+    (34, 16),
+    (23, 15),
+    (14, 17),
+    (7, 16),
+    (10, 7),
+    (4, 3),
+    (13, 1)
 ]
 
 track_template_list = [track_1, track_2, track_3]
@@ -198,7 +209,7 @@ def draw_frame():
                 string = "\033[93m" + "● " + "\033[0m"
                 row += string
             elif player_turn == 1 and abs(x - (px1+vx1)) <= 1 and abs(y - (py1+vy1)) <= 1:
-                row += "* "
+                row += "∗ "
             else:
                 row += ". "                    
         print(row)
@@ -236,25 +247,27 @@ while True:
     p2_dist = checkpoint_prox(px2, py2, p2_checkpoints)
     if p1_dist < 2.5:
         p1_checkpoints += 1
-    if p2_dist < 2.5:
-        p2_checkpoints += 1
-    if p1_turns == p2_turns:
-        if p1_checkpoints > p2_checkpoints:
-            player_turn = 1
-        elif p2_checkpoints > p1_checkpoints:
-            player_turn = 2
-        elif p1_dist < p2_dist:
-            player_turn = 1
+    if player_count > 1:
+        if p2_dist < 2.5:
+            p2_checkpoints += 1
+        if p1_turns == p2_turns:
+            if p1_checkpoints > p2_checkpoints:
+                player_turn = 1
+            elif p2_checkpoints > p1_checkpoints:
+                player_turn = 2
+            elif p1_dist < p2_dist:
+                player_turn = 1
+            else:
+                player_turn = 2
         else:
-            player_turn = 2
+            if p2_turns < p1_turns:
+                player_turn = 2
+            else:
+                player_turn = 1
     else:
-        if p2_turns < p1_turns:
-            player_turn = 2
-        else:
-            player_turn = 1
+        player_turn = 1
     draw_frame()
-    print(p1_checkpoints)
-    print(p2_checkpoints)
+    time.sleep(0.1)
     user_input = input("Enter action (w/a/s/d to adjust accel, space to reset, enter to confirm): ").lower().strip()
     if player_turn == 2:
         if user_input == 'w':
@@ -300,7 +313,7 @@ while True:
             p2_turns += 1
             
             if crossed_finish:
-                print(f"\nYou finished! You completed in {turns} turns!")
+                print(f"\nYou finished! You completed in {p2_turns} turns!")
                 print("Player 2 wins!")
                 break
     elif player_turn == 1:
@@ -349,9 +362,9 @@ while True:
             p1_turns += 1
 
             if crossed_finish:
-                print(f"\nYou finished! You completed in {turns} turns!")
+                print(f"\nYou finished! You completed in {p1_turns} turns!")
                 if player_count > 2:
                     print("Player 1 wins!")
                 break
             elif player_count == 1:
-                turns += 1
+                p1_turns += 1
