@@ -1,5 +1,9 @@
 import os
 import time
+import math
+os.system("clear")
+
+
 track_1 = [
     "WWWWWWWWWWWWWWWWWWWW", 
     "WWWW............wwWW", 
@@ -19,9 +23,17 @@ track_1 = [
     "WWww............wwwW", 
     "WWWWWWWWWWWWWWWWWWWW"
 ]
+t1_cp = [
+    (4, 8),
+    (7, 13),
+    (12, 13),
+    (12, 3),
+    (7, 3),
+    (4, 6)
+]
 track_2 = [
     "WWWWWWWWWWWWWWWWWWWW", 
-    "W.1.2.WWWW.......WWW", 
+    "W.1..2WWWW.......WWW", 
     "WW.....WW.........WW", 
     "WWW.....WW...WW....W", 
     "WWWW.....Ww...WW...W", 
@@ -38,29 +50,39 @@ track_2 = [
     "WW...............WWW", 
     "WWWWWWWWWWWWWWWWWWWW"
 ]
+t2_cp = [
+    (3, 1),
+    (4, 9),
+    (13, 2),
+    (16, 13),
+    (2, 13)
+]
 track_3 = [
     "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    "WW.......................................wW"
-    "WW.......................................wW"
-    "WW.....Wwwwwwwwwwwwwwwwwwwwwwwwwwww......wW"
-    "WWw......wwwwww.............wwwwww.......wW"
-    "WWww.......www...............wwww........wW"
-    "WWwwwww......ww.....wwww.......w.........wW"
-    "WWwwwwww......www.....www................wW"
-    "WWwwwww........ww.......wwww.............wW"
-    "WWwwww.........ww..........www...........wW"
-    "WWwww..........www..........wwwwwwwwwwwwwwW"
-    "WWww...........wwwwww.........wwwwwwwwwwwwW"
-    "WWw............wwwwwwwwwww......wwwwwwwwwwW"
-    "WW............www........www......wwwwwwwwW"
-    "WW...........wwww..........www.........wwwW"
-    "WW..........wwwww............www.........wW"
-    "WW........wwww........ww.......www.......wW"
-    "WW....................ww.................wW"
-    "WW...................wwww................wW"
-    "WWwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwW"
+    "WW...........Fw1........................wwW",
+    "WW...........Fw2.........................wW",
+    "WW.....Wwwwwwwwwwwwwwwwwwwwwwwwwwww......wW",
+    "WWw......wwwwww.............wwwwww.......wW",
+    "WWww.......www...............wwww........wW",
+    "WWwwwww......ww.....wwww.......w.........wW",
+    "WWwwwwww......www.....www................wW",
+    "WWwwwww........ww.......wwww.............wW",
+    "WWwwww.........ww..........www..........wwW",
+    "WWwww..........www..........wwwwwwwwwwwwwwW",
+    "WWww...........wwwwww.........wwwwwwwwwwwwW",
+    "WWw............wwwwwwwwwww......wwwwwwwwwwW",
+    "WW............www........www......wwwwwwwwW",
+    "WW...........wwww..........www.........wwwW",
+    "WW..........wwwww............www.........wW",
+    "WWw.......wwww........ww.......www.......wW",
+    "WWww..................ww................wwW",
+    "WWwww................wwww..............wwwW",
+    "WWwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwW",
+]
+t3_cp = [
 
 ]
+
 track_template_list = [track_1, track_2, track_3]
 
 print("What track would you like to race on (#)?")
@@ -85,7 +107,7 @@ while 1:
         print("Please pick a valid amount of players.")
 player_count = int(player_count)
 
-
+px2, py2 = 0, 0
 height = len(track_template)
 width = len(track_template[0])
 for y in range(height):
@@ -98,12 +120,26 @@ for y in range(height):
 
 vx1, vy1, vx2, vy2 = 0, 0, 0, 0
 ax1, ay1, ax2, ay2 = 0, 0, 0, 0
-turns = 0
-player_turn = 1
+p2_turns = 0
+p1_turns = 0
+p1_checkpoints = 0
+p2_checkpoints = 0
+
+def checkpoint_prox(px, py, current_cp):
+    if int(track) == 1:
+        checkpoints = t1_cp
+    elif int(track) == 2:
+        checkpoints = t2_cp
+    elif int(track) == 3:
+        checkpoints = t3_cp
+    next_cp = (current_cp + 1) % len(checkpoints)
+    cp_x, cp_y = checkpoints[next_cp]
+    distance = math.sqrt((px - cp_x)**2 + (py - cp_y)**2)
+    return distance
 
 def draw_frame():
     os.system('clear')
-    print(f"--- Vector Racing --- Turns: {turns}")
+    print(f"--- Vector Racing --- Turns: {p1_turns}")
     print(f"--- Player {player_turn}'s Turn! ---")
     if player_turn == 1:
         print(f"Current Velocity Vector: ({vx1}, {vy1})")
@@ -149,20 +185,20 @@ def draw_frame():
                 elif player_turn == 2 and x == px2 + vx2 + ax2 and y == py2 + vy2 + ay2:
                     string = "\033[94m" + "● " + "\033[0m"
                     row += string
-                elif player_turn == 2 and abs(x - (px2+vx2)) <= 1 and abs(y - (py2+vy2)) <= 1:
-                    row += "* "
                 elif player_turn == 1 and x == px1 + vx1 + ax1 and y == py1 + vy1 + ay1:
                     string = "\033[93m" + "● " + "\033[0m"
                     row += string
+                elif player_turn == 2 and abs(x - (px2+vx2)) <= 1 and abs(y - (py2+vy2)) <= 1:
+                    row += "* "
                 elif player_turn == 1 and abs(x - (px1+vx1)) <= 1 and abs(y - (py1+vy1)) <= 1:
                     row += "* "
                 else:
                     row += ". "
-            elif player_turn == 1 and abs(x - (px1+vx1)) <= 1 and abs(y - (py1+vy1)) <= 1:
-                row += "* "
             elif player_turn == 1 and x == px1 + vx1 + ax1 and y == py1 + vy1 + ay1:
                 string = "\033[93m" + "● " + "\033[0m"
                 row += string
+            elif player_turn == 1 and abs(x - (px1+vx1)) <= 1 and abs(y - (py1+vy1)) <= 1:
+                row += "* "
             else:
                 row += ". "                    
         print(row)
@@ -170,7 +206,6 @@ def draw_frame():
         print(f"\nAdjusted Input Accel Vector: ({ax1}, {ay1})")
     elif player_turn == 2:
         print(f"\nAdjusted Input Accel Vector: ({ax2}, {ay2})")
-        
 
 def get_line_points(x1, y1, x2, y2):
     points = []
@@ -183,11 +218,10 @@ def get_line_points(x1, y1, x2, y2):
         points.append({"x": x1, "y": y1})
         if x1 == x2 and y1 == y2:
             break
-        e2 = 2 * err
-        if e2 > -dy:
+        if 2 * err > -dy:
             err -= dy
             x1 += sx
-        if e2 < dx:
+        if 2 * err < dx:
             err += dx
             y1 += sy
     return points
@@ -198,7 +232,29 @@ def wall_collide(x, y):
     return track_template[y][x] == "W" or track_template[y][x] == "w"
 
 while True:
+    p1_dist = checkpoint_prox(px1, py1, p1_checkpoints)
+    p2_dist = checkpoint_prox(px2, py2, p2_checkpoints)
+    if p1_dist < 2.5:
+        p1_checkpoints += 1
+    if p2_dist < 2.5:
+        p2_checkpoints += 1
+    if p1_turns == p2_turns:
+        if p1_checkpoints > p2_checkpoints:
+            player_turn = 1
+        elif p2_checkpoints > p1_checkpoints:
+            player_turn = 2
+        elif p1_dist < p2_dist:
+            player_turn = 1
+        else:
+            player_turn = 2
+    else:
+        if p2_turns < p1_turns:
+            player_turn = 2
+        else:
+            player_turn = 1
     draw_frame()
+    print(p1_checkpoints)
+    print(p2_checkpoints)
     user_input = input("Enter action (w/a/s/d to adjust accel, space to reset, enter to confirm): ").lower().strip()
     if player_turn == 2:
         if user_input == 'w':
@@ -238,12 +294,11 @@ while True:
                 print("\nYou have crashed! Player 1 wins!")
                 break
 
-            player_turn = 1
-            turns += 1
             travel_path = []
             ax2 = 0
             ay2 = 0
-
+            p2_turns += 1
+            
             if crossed_finish:
                 print(f"\nYou finished! You completed in {turns} turns!")
                 print("Player 2 wins!")
@@ -291,13 +346,12 @@ while True:
             ax1 = 0
             ay1 = 0
             travel_path = []
+            p1_turns += 1
 
             if crossed_finish:
                 print(f"\nYou finished! You completed in {turns} turns!")
                 if player_count > 2:
                     print("Player 1 wins!")
                 break
-            if player_count > 1:
-                player_turn = 2
             elif player_count == 1:
                 turns += 1
