@@ -8,49 +8,51 @@ os.system("clear")
 #(0, 1) (1, 1)
 #(0, 2)
 track_1 = [
-    "WWWWWWWWWWWWWWWWWWWW", 
-    "WWWW............wwWW", 
-    "WWw..............wwW", 
-    "Ww......wwww......wW", 
-    "Ww.....wwWwww.....wW", 
-    "WW.....wWWWWw.....wW", 
-    "WWFFFFFwWWWWw.....wW", 
-    "WWWWWWWwWWWWw.....wW", 
-    "Ww.1.2.WWWWWw.....wW", 
-    "Ww.....WWWwWw.....wW", 
-    "WW.....WWwwWw.....WW", 
-    "WW.....WWWwww.....wW", 
-    "WW.....WWwwww.....wW", 
-    "Ww......wwww......wW", 
-    "Www..............wwW", 
-    "WWww............wwwW", 
+    "WWWWWWWWWWWWWWWWWWWW",
+    "WWWWW..........WWWWW"
+    "WWWW............wwWW",
+    "WWw..............wwW",
+    "Ww......wwww......wW",
+    "Ww.....wwWwww.....wW",
+    "WW.....wWWWWw.....wW",
+    "WWFFFFFwWWWWw.....wW",
+    "WWWWWWWwWWWWw.....wW",
+    "Ww.1.2.WWWWWw.....wW",
+    "Ww.....WWWwWw.....wW",
+    "WW.....WWwwWw.....WW",
+    "WW.....WWWwww.....wW",
+    "WW.....WWwwww.....wW",
+    "Ww......wwww......wW",
+    "Www..............wwW",
+    "WWww............wwwW",
+    "WWWWW..........WWWWW"
     "WWWWWWWWWWWWWWWWWWWW"
 ]
 t1_cp = [
-    (4, 8),
-    (7, 13),
-    (12, 13),
-    (12, 3),
-    (7, 3),
-    (4, 6)
+    (4, 9),
+    (7, 14),
+    (12, 14),
+    (12, 4),
+    (7, 4),
+    (4, 7)
 ]
 track_2 = [
-    "WWWWWWWWWWWWWWwWWWWWW", 
-    "W.1..2WWWW........WWW", 
-    "WW.....WWw.........WW", 
-    "WWW.....WW....WW....W", 
-    "WWWW....wWw....WW...W", 
-    "WWWW....WWWW....W...W", 
-    "WWW.....WWWW....W...W", 
-    "WW......WWWW....W...W", 
-    "W......WWWW.....W...W", 
-    "W....WWWWW.....WW...W", 
-    "WW....WWW.....WW...WW", 
-    "WWW..........Ww.....W", 
-    "WWWW.......WWWWWw...W", 
-    "WFFWWWWWWWWWWW......W", 
-    "W..................WW", 
-    "WW................WWW", 
+    "WWWWWWWWWWWWWWwWWWWWW",
+    "W.1..2WWWW........WWW",
+    "WW.....WWw.........WW",
+    "WWW.....WW....WW....W",
+    "WWWW....wWw....WW...W",
+    "WWWW....WWWW....W...W",
+    "WWW.....WWWW....W...W",
+    "WW......WWWW....W...W",
+    "W......WWWW.....W...W",
+    "W....WWWWW.....WW...W",
+    "WW....WWW.....WW...WW",
+    "WWW..........Ww.....W",
+    "WWWW.......WWWWWw...W",
+    "WFFWWWWWWWWWWW......W",
+    "W..................WW",
+    "WW................WWW",
     "WWWWWWWWWWWWWWWWWWWWW"
 ]
 t2_cp = [
@@ -84,7 +86,7 @@ track_3 = [
 ]
 t3_cp = [
     (16, 1),
-    (35, 2), 
+    (35, 2),
     (31, 7),
     (23, 5),
     (17, 6),
@@ -252,13 +254,13 @@ def slipstream(trail_x, lead_x, trail_y, lead_y, trail_vx, trail_vy):
     slip = []
     dx = lead_x - trail_x
     dy = lead_y - trail_y
-    if dx == 1 and dy == 0 and trail_vx > 0: #East
+    if dx == 1 and dy == 0 and trail_vx >= abs(trail_vy) >= 0: #East
         slip.append("e")
-    if dx == -1 and dy == 0 and trail_vx < 0: #West
+    if dx == -1 and dy == 0 and trail_vx < 0 and abs(trail_vx) >= abs(trail_vy): #West
         slip.append("w")
-    if dy == 1 and dx == 0 and trail_vy > 0: #South
+    if dy == 1 and dx == 0 and trail_vy >= abs(trail_vx) >= 0: #South
         slip.append("s")
-    if dy == -1 and dx == 0 and trail_vy < 0: #North
+    if dy == -1 and dx == 0 and trail_vy < 0 and abs(trail_vy) >= abs(trail_vx): #North
         slip.append("n")
 def turn_order():
     global p1_checkpoints
