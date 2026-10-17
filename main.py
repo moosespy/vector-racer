@@ -3,7 +3,10 @@ import time
 import math
 os.system("clear")
 
-
+#Grid works like this:
+#(0, 0) (1, 0) (2, 0)
+#(0, 1) (1, 1)
+#(0, 2)
 track_1 = [
     "WWWWWWWWWWWWWWWWWWWW", 
     "WWWW............wwWW", 
@@ -48,7 +51,7 @@ track_2 = [
     "WFFWWWWWWWWWWW......W", 
     "W..................WW", 
     "WW................WWW", 
-    "WWWWWWWWWWWWWWWWWWWW"
+    "WWWWWWWWWWWWWWWWWWWWW"
 ]
 t2_cp = [
     (3, 1),
@@ -118,7 +121,8 @@ while 1:
         print("Please pick a valid amount of players.")
 player_count = int(player_count)
 
-px2, py2 = 0, 0
+if player_count > 1:
+    px2, py2 = 0, 0
 height = len(track_template)
 width = len(track_template[0])
 for y in range(height):
@@ -150,7 +154,8 @@ def checkpoint_prox(px, py, current_cp):
 
 def draw_frame():
     os.system('clear')
-    print(f"--- Vector Racing --- Turns: {p1_turns}")
+    print(f"--- Vector Racing --- Turns: {min(p1_turns, p2_turns)}")
+    print(f"Player 1 Turns: {p1_turns} --- Player 2 Turns: {p2_turns}")
     print(f"--- Player {player_turn}'s Turn! ---")
     if player_turn == 1:
         print(f"Current Velocity Vector: ({vx1}, {vy1})")
@@ -242,9 +247,27 @@ def wall_collide(x, y):
         return True
     return track_template[y][x] == "W" or track_template[y][x] == "w"
 
-while True:
+def slipstream(trail_x, lead_x, trail_y, lead_y, trail_vx, trail_vy):
+    global slip
+    slip = []
+    dx = lead_x - trail_x
+    dy = lead_y - trail_y
+    if dx == 1 and dy == 0 and trail_vx > 0: #East
+        slip.append("e")
+    if dx == -1 and dy == 0 and trail_vx < 0: #West
+        slip.append("w")
+    if dy == 1 and dx == 0 and trail_vy > 0: #South
+        slip.append("s")
+    if dy == -1 and dx == 0 and trail_vy < 0: #North
+        slip.append("n")
+def turn_order():
+    global p1_checkpoints
+    global p2_checkpoints
+    global player_turn
+    global round_start
     p1_dist = checkpoint_prox(px1, py1, p1_checkpoints)
-    p2_dist = checkpoint_prox(px2, py2, p2_checkpoints)
+    if player_count > 1:
+        p2_dist = checkpoint_prox(px2, py2, p2_checkpoints)
     if p1_dist < 2.5:
         p1_checkpoints += 1
     if player_count > 1:
@@ -253,12 +276,20 @@ while True:
         if p1_turns == p2_turns:
             if p1_checkpoints > p2_checkpoints:
                 player_turn = 1
+                round_start = 1
+                slipstream(px2, px1, py2, py1, vx2, vy2)
             elif p2_checkpoints > p1_checkpoints:
                 player_turn = 2
+                round_start = 2
+                slipstream(px1, px2, py1, py2, vx1, vy1)
             elif p1_dist < p2_dist:
                 player_turn = 1
+                round_start = 1
+                slipstream(px2, px1, py2, py1, vx2, vy2)
             else:
                 player_turn = 2
+                round_start = 2
+                slipstream(px1, px2, py1, py2, vx1, vy1)
         else:
             if p2_turns < p1_turns:
                 player_turn = 2
@@ -266,6 +297,10 @@ while True:
                 player_turn = 1
     else:
         player_turn = 1
+        round_start = 1
+
+while True:
+    turn_order()
     draw_frame()
     time.sleep(0.1)
     user_input = input("Enter action (w/a/s/d to adjust accel, space to reset, enter to confirm): ").lower().strip()
@@ -287,6 +322,24 @@ while True:
             old_px2, old_py2 = px2, py2
             new_px2 = px2 + vx2
             new_py2 = py2 + vy2
+
+            if round_start == 1:
+                if "n" in slip:
+                    stream = input("Slipstream north (y, n)? ")
+                    if stream == "y":
+                        new_py2 -= 1
+                if "e" in slip:
+                    stream = input("Slipstream east (y, n)? ")
+                    if stream == "y":
+                        new_px2 += 1
+                if "s" in slip:
+                    stream = input("Slipstream south (y, n)? ")
+                    if stream == "y":
+                        new_py2 += 1
+                if "w" in slip:
+                    stream = input("Slipstream west (y, n)? ")
+                    if stream == "y":
+                        new_px2 -= 1
 
             travel_path = get_line_points(old_px2, old_py2, new_px2, new_py2)
             hit_wall = False
@@ -335,6 +388,24 @@ while True:
             new_px1 = px1 + vx1
             new_py1 = py1 + vy1
 
+            if round_start == 2:
+                if "n" in slip:
+                    stream = input("Slipstream north (y, n)? ")
+                    if stream == "y":
+                        new_py1 -= 1
+                if "e" in slip:
+                    stream = input("Slipstream east (y, n)? ")
+                    if stream == "y":
+                        new_px1 += 1
+                if "s" in slip:
+                    stream = input("Slipstream south (y, n)? ")
+                    if stream == "y":
+                        new_py1 += 1
+                if "w" in slip:
+                    stream = input("Slipstream west (y, n)? ")
+                    if stream == "y":
+                        new_px1 -= 1
+
             travel_path = get_line_points(old_px1, old_py1, new_px1, new_py1)
             hit_wall = False
             crossed_finish = False
@@ -347,8 +418,9 @@ while True:
                     crossed_finish = True
                     break
             px1, py1 = new_px1, new_py1
-            if px1 == px2 and py1 == py2 and player_count > 1:
+            if px1 == px2 and py1 == py2:
                 print("\nYou have crashed into Player 2! Player 2 wins!")
+                break
             if hit_wall:
                 if player_count > 1:
                     print("\nYou have crashed! Player 2 wins!")
@@ -366,5 +438,3 @@ while True:
                 if player_count > 2:
                     print("Player 1 wins!")
                 break
-            elif player_count == 1:
-                p1_turns += 1
