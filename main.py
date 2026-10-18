@@ -160,16 +160,27 @@ def checkpoint_prox(px, py, current_cp):
     return distance
 
 def draw_frame():
-    os.system('clear')
+    print("\033[2J\033[H\033[3J", end="")
     print(f"--- Vector Racing --- Turns: {min(p1_turns, p2_turns)}")
-    print(f"Player 1 Turns: {p1_turns} --- Player 2 Turns: {p2_turns}")
-    print(f"--- Player {player_turn}'s Turn! ---")
+    if player_turn == 1:
+        print(f"\u001b[1m\033[38;2;255;165;0m--- Player {player_turn}'s Turn! ---\u001b[0m\033[0m")
+    elif player_turn == 2:
+        print(f"\u001b[1m\033[34m--- Player {player_turn}'s Turn! ---\u001b[0m\033[0m")
+    if "n" in slip:
+        print("Eligible for \033[103mNorth\033[0m Slipstream")
+    elif "e" in slip:
+        print("Eligible for \033[103mEast\033[0m Slipstream")
+    elif "s" in slip:
+        print("Eligible for \033[103mSouth\033[0m Slipstream")
+    elif "w" in slip:
+        print("Eligible for \033[103mWest\033[0m Slipstream")
     if player_turn == 1:
         print(f"Current Velocity Vector: ({vx1}, {vy1})")
         print(f"Next Move Preview: Coasting to ({px1+vx1+ax1}, {py1+vy1+ay1})")
     elif player_turn == 2:
         print(f"Current Velocity Vector: ({vx2}, {vy2})")
         print(f"Next Move Preview: Coasting to ({px2+vx2+ax2}, {py2+vy2+ay2})")
+    full_frame = ""
     for y in range(height):
         row = ""
         for x in range(width):
@@ -177,40 +188,34 @@ def draw_frame():
             if x == px1 and y == py1:
                 if abs(vy1) >= abs(vx1):
                     if vy1 >= 0:
-                        string = "\033[38;2;255;165;0m" + "▼ " + "\033[0m"
+                        row += "\033[38;2;255;165;0m" + "▼ " + "\033[0m"
                     else:
-                        string = "\033[38;2;255;165;0m" + "▲ " + "\033[0m"
+                        row += "\033[38;2;255;165;0m" + "▲ " + "\033[0m"
                 elif abs(vx1) > abs(vy1):
                     if vx1 > 0:
-                        string = "\033[38;2;255;165;0m" + "► " + "\033[0m"
+                        row += "\033[38;2;255;165;0m" + "► " + "\033[0m"
                     else:
-                        string = "\033[38;2;255;165;0m" + "◄ " + "\033[0m"
-                row += string
+                        row += "\033[38;2;255;165;0m" + "◄ " + "\033[0m"
             elif tile == "W" or tile == "w":
-                string = "\033[37m" + "█ " + "\033[0m"
-                row += string
+                row += "\033[37m" + "█ " + "\033[0m"
             elif tile == "F" or tile == "f":
-                string = "\033[32m" + "🏁" + "\033[0m"
-                row += string
+                row += "\033[32m" + "🏁" + "\033[0m"
             elif player_count > 1:
                 if x == px2 and y == py2:
                     if abs(vy2) >= abs(vx2):
                         if vy2 >= 0:
-                            string = "\033[34m" + "▼ " + "\033[0m"
+                            row += "\033[34m" + "▼ " + "\033[0m"
                         else:
-                            string = "\033[34m" + "▲ " + "\033[0m"
+                            row += "\033[34m" + "▲ " + "\033[0m"
                     elif abs(vx2) > abs(vy2):
                         if vx2 > 0:
-                            string = "\033[34m" + "► " + "\033[0m"
+                            row += "\033[34m" + "► " + "\033[0m"
                         else:
-                            string = "\033[34m" + "◄ " + "\033[0m"
-                    row += string                
+                            row += "\033[34m" + "◄ " + "\033[0m"
                 elif player_turn == 2 and x == px2 + vx2 + ax2 and y == py2 + vy2 + ay2:
-                    string = "\033[94m" + "● " + "\033[0m"
-                    row += string
+                    row += "\033[94m" + "● " + "\033[0m"
                 elif player_turn == 1 and x == px1 + vx1 + ax1 and y == py1 + vy1 + ay1:
-                    string = "\033[93m" + "● " + "\033[0m"
-                    row += string
+                    row += "\033[93m" + "● " + "\033[0m"
                 elif player_turn == 2 and abs(x - (px2+vx2)) <= 1 and abs(y - (py2+vy2)) <= 1:
                     row += "* "
                 elif player_turn == 1 and abs(x - (px1+vx1)) <= 1 and abs(y - (py1+vy1)) <= 1:
@@ -218,19 +223,21 @@ def draw_frame():
                 else:
                     row += ". "
             elif player_turn == 1 and x == px1 + vx1 + ax1 and y == py1 + vy1 + ay1:
-                string = "\033[93m" + "● " + "\033[0m"
-                row += string
+                row += "\033[93m" + "● " + "\033[0m"
             elif player_turn == 1 and abs(x - (px1+vx1)) <= 1 and abs(y - (py1+vy1)) <= 1:
                 row += "∗ "
             else:
                 row += ". "                    
-        print(row)
+        full_frame += row + "\n"
+    print(full_frame, end="", flush=True)
     if player_turn == 1:
         print(f"\nAdjusted Input Accel Vector: ({ax1}, {ay1})")
     elif player_turn == 2:
         print(f"\nAdjusted Input Accel Vector: ({ax2}, {ay2})")
 
 def get_line_points(x1, y1, x2, y2):
+    if x1 == x2 and y1 == y2:
+        return [{"x": x1, "y": y1}]
     global points
     points.clear()
     dx = abs(x2-x1)
@@ -242,10 +249,11 @@ def get_line_points(x1, y1, x2, y2):
         points.append({"x": x1, "y": y1})
         if x1 == x2 and y1 == y2:
             break
-        if 2 * err > -dy:
+        e2 = 2 * err
+        if e2 > -dy:
             err -= dy
             x1 += sx
-        if 2 * err < dx:
+        if e2 < dx:
             err += dx
             y1 += sy
     return points
@@ -333,22 +341,23 @@ while True:
             new_px2 = px2 + vx2
             new_py2 = py2 + vy2
 
-            if "n" in slip:
-                stream = input("Slipstream north (y, n)? ")
-                if stream == "y":
-                    new_py2 -= 1
-            if "e" in slip:
-                stream = input("Slipstream east (y, n)? ")
-                if stream == "y":
-                    new_px2 += 1
-            if "s" in slip:
-                stream = input("Slipstream south (y, n)? ")
-                if stream == "y":
-                    new_py2 += 1
-            if "w" in slip:
-                stream = input("Slipstream west (y, n)? ")
-                if stream == "y":
-                    new_px2 -= 1
+            if round_start == 1:
+                if "n" in slip:
+                    stream = input("Slipstream north (y, n)? ")
+                    if stream == "y":
+                        new_py2 -= 1
+                if "e" in slip:
+                    stream = input("Slipstream east (y, n)? ")
+                    if stream == "y":
+                        new_px2 += 1
+                if "s" in slip:
+                    stream = input("Slipstream south (y, n)? ")
+                    if stream == "y":
+                        new_py2 += 1
+                if "w" in slip:
+                    stream = input("Slipstream west (y, n)? ")
+                    if stream == "y":
+                        new_px2 -= 1
 
             travel_path = get_line_points(old_px2, old_py2, new_px2, new_py2)
             hit_wall = False
@@ -397,22 +406,23 @@ while True:
             new_px1 = px1 + vx1
             new_py1 = py1 + vy1
 
-            if "n" in slip:
-                stream = input("Slipstream north (y, n)? ")
-                if stream == "y":
-                    new_py1 -= 1
-            if "e" in slip:
-                stream = input("Slipstream east (y, n)? ")
-                if stream == "y":
-                    new_px1 += 1
-            if "s" in slip:
-                stream = input("Slipstream south (y, n)? ")
-                if stream == "y":
-                    new_py1 += 1
-            if "w" in slip:
-                stream = input("Slipstream west (y, n)? ")
-                if stream == "y":
-                    new_px1 -= 1
+            if round_start == 2:
+                if "n" in slip:
+                    stream = input("Slipstream north (y, n)? ")
+                    if stream == "y":
+                        new_py1 -= 1
+                if "e" in slip:
+                    stream = input("Slipstream east (y, n)? ")
+                    if stream == "y":
+                        new_px1 += 1
+                if "s" in slip:
+                    stream = input("Slipstream south (y, n)? ")
+                    if stream == "y":
+                        new_py1 += 1
+                if "w" in slip:
+                    stream = input("Slipstream west (y, n)? ")
+                    if stream == "y":
+                        new_px1 -= 1
 
             travel_path = get_line_points(old_px1, old_py1, new_px1, new_py1)
             hit_wall = False
