@@ -9,7 +9,7 @@ os.system("clear")
 #(0, 2)
 track_1 = [
     "WWWWWWWWWWWWWWWWWWWW",
-    "WWWWW..........WWWWW"
+    "WWWWW..........WWWWW",
     "WWWW............wwWW",
     "WWw..............wwW",
     "Ww......wwww......wW",
@@ -25,7 +25,7 @@ track_1 = [
     "Ww......wwww......wW",
     "Www..............wwW",
     "WWww............wwwW",
-    "WWWWW..........WWWWW"
+    "WWWWW..........WWWWW",
     "WWWWWWWWWWWWWWWWWWWW"
 ]
 t1_cp = [
@@ -40,32 +40,34 @@ track_2 = [
     "WWWWWWWWWWWWWWwWWWWWW",
     "W.1..2WWWW........WWW",
     "WW.....WWw.........WW",
-    "WWW.....WW....WW....W",
-    "WWWW....wWw....WW...W",
-    "WWWW....WWWW....W...W",
+    "WWW.....WW..........W",
+    "WWWW....wW....wWW...W",
+    "WWWW....WWW....wW...W",
     "WWW.....WWWW....W...W",
-    "WW......WWWW....W...W",
-    "W......WWWW.....W...W",
-    "W....WWWWW.....WW...W",
-    "WW....WWW.....WW...WW",
+    "WW......WWWW...wW...W",
+    "W......WWWW....w....W",
+    "W....WWWWW....wW....W",
+    "WW....WWW.....W...wWW",
     "WWW..........Ww.....W",
-    "WWWW.......WWWWWw...W",
+    "WWWW.......WWWWW....W",
     "WFFWWWWWWWWWWW......W",
     "W..................WW",
     "WW................WWW",
+    "WWW..............WWWW",
     "WWWWWWWWWWWWWWWWWWWWW"
 ]
 t2_cp = [
     (3, 1),
     (4, 9),
-    (13, 2),
+    (14, 3),
     (16, 13),
     (2, 13)
 ]
 track_3 = [
     "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    "WW...........Fw1........................wwW",
-    "WW...........Fw2.........................wW",
+    "WW...........Fw2.......................WWWW",
+    "WW...........Fw.........................wwW",
+    "WW...........Fw1.........................wW",
     "WW.....Wwwwwwwwwwwwwwwwwwwwwwwwwwww......wW",
     "WWw......wwwwww.............wwwwww.......wW",
     "WWww.......www...............wwww........wW",
@@ -82,20 +84,21 @@ track_3 = [
     "WWw.......wwww........ww.......www.......wW",
     "WWww..................ww................wwW",
     "WWwww................wwww..............wwwW",
-    "WWwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwW",
+    "wwwwww..............wwwwww............wwwww",
+    "WWwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwW"
 ]
 t3_cp = [
-    (16, 1),
-    (35, 2),
-    (31, 7),
-    (23, 5),
-    (17, 6),
-    (34, 16),
-    (23, 15),
-    (14, 17),
-    (7, 16),
-    (10, 7),
-    (4, 3),
+    (16, 2),
+    (35, 3),
+    (31, 8),
+    (23, 6),
+    (17, 7),
+    (34, 17),
+    (23, 16),
+    (14, 18),
+    (7, 17),
+    (10, 8),
+    (4, 4),
     (13, 1)
 ]
 
@@ -141,6 +144,8 @@ p2_turns = 0
 p1_turns = 0
 p1_checkpoints = 0
 p2_checkpoints = 0
+slip = []
+points = []
 
 def checkpoint_prox(px, py, current_cp):
     if int(track) == 1:
@@ -226,7 +231,8 @@ def draw_frame():
         print(f"\nAdjusted Input Accel Vector: ({ax2}, {ay2})")
 
 def get_line_points(x1, y1, x2, y2):
-    points = []
+    global points
+    points.clear()
     dx = abs(x2-x1)
     dy = abs(y2-y1)
     sx = 1 if x1 < x2 else -1
@@ -251,16 +257,16 @@ def wall_collide(x, y):
 
 def slipstream(trail_x, lead_x, trail_y, lead_y, trail_vx, trail_vy):
     global slip
-    slip = []
+    slip.clear()
     dx = lead_x - trail_x
     dy = lead_y - trail_y
-    if dx == 1 and dy == 0 and trail_vx >= abs(trail_vy) >= 0: #East
+    if dx == 1 and dy == 0 and trail_vx > 0: #East
         slip.append("e")
-    if dx == -1 and dy == 0 and trail_vx < 0 and abs(trail_vx) >= abs(trail_vy): #West
+    if dx == -1 and dy == 0 and trail_vx <= 0 and abs(trail_vx) >= abs(trail_vy): #West
         slip.append("w")
-    if dy == 1 and dx == 0 and trail_vy >= abs(trail_vx) >= 0: #South
+    if dy == 1 and dx == 0 and trail_vy > 0: #South
         slip.append("s")
-    if dy == -1 and dx == 0 and trail_vy < 0 and abs(trail_vy) >= abs(trail_vx): #North
+    if dy == -1 and dx == 0 and trail_vy <= 0 and abs(trail_vy) >= abs(trail_vx): #North
         slip.append("n")
 def turn_order():
     global p1_checkpoints
@@ -302,9 +308,11 @@ def turn_order():
         round_start = 1
 
 while True:
+    time.sleep(0.03)
     turn_order()
+    time.sleep(0.03)
     draw_frame()
-    time.sleep(0.1)
+    time.sleep(0.03)
     user_input = input("Enter action (w/a/s/d to adjust accel, space to reset, enter to confirm): ").lower().strip()
     if player_turn == 2:
         if user_input == 'w':
@@ -362,7 +370,7 @@ while True:
                 print("\nYou have crashed! Player 1 wins!")
                 break
 
-            travel_path = []
+            travel_path.clear()
             ax2 = 0
             ay2 = 0
             p2_turns += 1
@@ -420,9 +428,10 @@ while True:
                     crossed_finish = True
                     break
             px1, py1 = new_px1, new_py1
-            if px1 == px2 and py1 == py2:
-                print("\nYou have crashed into Player 2! Player 2 wins!")
-                break
+            if player_count > 1:
+                if px1 == px2 and py1 == py2:
+                    print("\nYou have crashed into Player 2! Player 2 wins!")
+                    break
             if hit_wall:
                 if player_count > 1:
                     print("\nYou have crashed! Player 2 wins!")
@@ -432,7 +441,7 @@ while True:
 
             ax1 = 0
             ay1 = 0
-            travel_path = []
+            travel_path.clear()
             p1_turns += 1
 
             if crossed_finish:
