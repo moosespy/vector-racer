@@ -333,23 +333,22 @@ while True:
             new_px2 = px2 + vx2
             new_py2 = py2 + vy2
 
-            if round_start == 1:
-                if "n" in slip:
-                    stream = input("Slipstream north (y, n)? ")
-                    if stream == "y":
-                        new_py2 -= 1
-                if "e" in slip:
-                    stream = input("Slipstream east (y, n)? ")
-                    if stream == "y":
-                        new_px2 += 1
-                if "s" in slip:
-                    stream = input("Slipstream south (y, n)? ")
-                    if stream == "y":
-                        new_py2 += 1
-                if "w" in slip:
-                    stream = input("Slipstream west (y, n)? ")
-                    if stream == "y":
-                        new_px2 -= 1
+            if "n" in slip:
+                stream = input("Slipstream north (y, n)? ")
+                if stream == "y":
+                    new_py2 -= 1
+            if "e" in slip:
+                stream = input("Slipstream east (y, n)? ")
+                if stream == "y":
+                    new_px2 += 1
+            if "s" in slip:
+                stream = input("Slipstream south (y, n)? ")
+                if stream == "y":
+                    new_py2 += 1
+            if "w" in slip:
+                stream = input("Slipstream west (y, n)? ")
+                if stream == "y":
+                    new_px2 -= 1
 
             travel_path = get_line_points(old_px2, old_py2, new_px2, new_py2)
             hit_wall = False
@@ -398,23 +397,22 @@ while True:
             new_px1 = px1 + vx1
             new_py1 = py1 + vy1
 
-            if round_start == 2:
-                if "n" in slip:
-                    stream = input("Slipstream north (y, n)? ")
-                    if stream == "y":
-                        new_py1 -= 1
-                if "e" in slip:
-                    stream = input("Slipstream east (y, n)? ")
-                    if stream == "y":
-                        new_px1 += 1
-                if "s" in slip:
-                    stream = input("Slipstream south (y, n)? ")
-                    if stream == "y":
-                        new_py1 += 1
-                if "w" in slip:
-                    stream = input("Slipstream west (y, n)? ")
-                    if stream == "y":
-                        new_px1 -= 1
+            if "n" in slip:
+                stream = input("Slipstream north (y, n)? ")
+                if stream == "y":
+                    new_py1 -= 1
+            if "e" in slip:
+                stream = input("Slipstream east (y, n)? ")
+                if stream == "y":
+                    new_px1 += 1
+            if "s" in slip:
+                stream = input("Slipstream south (y, n)? ")
+                if stream == "y":
+                    new_py1 += 1
+            if "w" in slip:
+                stream = input("Slipstream west (y, n)? ")
+                if stream == "y":
+                    new_px1 -= 1
 
             travel_path = get_line_points(old_px1, old_py1, new_px1, new_py1)
             hit_wall = False
