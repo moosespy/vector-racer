@@ -49,7 +49,7 @@ track_2 = [
     "W....WWWWW....wW....W",
     "WW....WWW.....W...wWW",
     "WWW..........Ww.....W",
-    "WWWW.......WWWWW....W",
+    "WWWW........WWWW....W",
     "WFFWWWWWWWWWWW......W",
     "W..................WW",
     "WW................WWW",
@@ -71,17 +71,17 @@ track_3 = [
     "WW.....Wwwwwwwwwwwwwwwwwwwwwwwwwwww......wW",
     "WWw......wwwwww.............wwwwww.......wW",
     "WWww.......www...............wwww........wW",
-    "WWwwwww......ww.....wwww.......w.........wW",
-    "WWwwwwww......www.....www................wW",
-    "WWwwwww........ww.......wwww.............wW",
-    "WWwwww.........ww..........www..........wwW",
-    "WWwww..........www..........wwwwwwwwwwwwwwW",
-    "WWww...........wwwwww.........wwwwwwwwwwwwW",
-    "WWw............wwwwwwwwwww......wwwwwwwwwwW",
-    "WW............www........www......wwwwwwwwW",
-    "WW...........wwww..........www.........wwwW",
-    "WW..........wwwww............www.........wW",
-    "WWw.......wwww........ww.......www.......wW",
+    "WWwww........ww.....wwww.......w.........wW",
+    "WWwwwww.......ww......www................wW",
+    "WWwwwwwww......ww.......wwww.............wW",
+    "WWwwwwww.......ww..........www..........wwW",
+    "WWwwwww........www..........wwwwwwwwwwwwwwW",
+    "WWwww..........wwwwww.........wwwwwwwwwwwwW",
+    "WWw............wwwwwwwwww.......wwwwwwwwwwW",
+    "WW............www.......www.......wwwwwwwwW",
+    "WW...........wwww.........www..........wwwW",
+    "WW..........wwwww...........www..........wW",
+    "WWw.......wwww........w.......wwww.......wW",
     "WWww..................ww................wwW",
     "WWwww................wwww..............wwwW",
     "wwwwww..............wwwwww............wwwww",
@@ -101,16 +101,39 @@ t3_cp = [
     (4, 4),
     (13, 1)
 ]
+track_4 = [
+    "WWWWWWWWWWWW",
+    "WFW........W",
+    "W.W.WWWWW..W",
+    "W.W....1W.WW",
+    "W.WWWWW2W..W",
+    "W.W...WWWW.W",
+    "W.W.W..WW..W",
+    "W...WW.....W",
+    "WWWWWWWWWWWW"
+]
+t4_cp = [
+    (7, 3),
+    (3, 3),
+    (3, 1),
+    (9, 1),
+    (10, 5),
+    (8, 7),
+    (4, 5),
+    (2, 7),
+    (1, 1)
+]
 
-track_template_list = [track_1, track_2, track_3]
+track_template_list = [track_1, track_2, track_3, track_4]
 
 print("What track would you like to race on (#)?")
 print("1) Oval")
 print("2) Snake")
 print("3) Z-Track")
+print("4) Baby Race")
 while 1:
     track = input()
-    if 1 <= int(track) <= 3:
+    if 1 <= int(track) <= len(track_template_list):
         break
     else:
         print("Please pick a track number.")
@@ -154,6 +177,8 @@ def checkpoint_prox(px, py, current_cp):
         checkpoints = t2_cp
     elif int(track) == 3:
         checkpoints = t3_cp
+    elif int(track) == 4:
+        checkpoints = t4_cp
     next_cp = (current_cp + 1) % len(checkpoints)
     cp_x, cp_y = checkpoints[next_cp]
     distance = math.sqrt((px - cp_x)**2 + (py - cp_y)**2)
